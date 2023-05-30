@@ -1,6 +1,6 @@
 # Blue moon cooking
 
-This repository contains an application for cooking recipes managment
+This repository contains an application for cooking recipes management
 
 ## Installation
 
