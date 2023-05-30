@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "blue-moon-cooking"
+version = "0.1.0"
+description = "The cooking central"
+authors = ["Andrei Boyanov <andrei.boyanov@gmail.com>"]
+license = "GPL"
+readme = "README.md"
+packages = [{include = "blue_moon_cooking"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
