@@ -10,6 +10,12 @@ def test_client():
 
 def test_get_recipes(test_client):
     result = test_client.get("http://localhost:8000/recipes/")
-    from pprint import pprint
-    pprint(result.json())
     assert len(result.json()) == 2
+
+def test_get_recipes_with_limit_1(test_client):
+    result = test_client.get("http://localhost:8000/recipes/?limit=1")
+    assert len(result.json()) == 1
+
+def test_get_recipes_starting_from_the_second(test_client):
+    result = test_client.get("http://localhost:8000/recipes/?skip=1&limit=1")
+    assert result.json()[0]["id"] == 2

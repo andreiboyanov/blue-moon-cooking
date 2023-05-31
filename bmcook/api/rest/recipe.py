@@ -8,7 +8,7 @@ router = APIRouter()
 
 @router.get("/")
 def get_recipes(skip: int = 0, limit: int = 10):
-    return RECIPES
+    return RECIPES[skip:skip+limit]
 
 
 @router.get("/{recipe_id}")
