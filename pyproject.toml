@@ -9,6 +9,8 @@ packages = [{include = "bmcooking"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+fastapi = "^0.95.2"
+uvicorn = "^0.22.0"
 
 
 [tool.poetry.group.dev.dependencies]
