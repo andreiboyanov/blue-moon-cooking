@@ -1,5 +1,6 @@
 RECIPES = [
     {
+        "id": 1,
         "name": "Meat balls",
         "description": "Meat balls from pork",
         "preparation": """
@@ -22,6 +23,7 @@ RECIPES = [
         ]
     },
     {
+        "id": 2,
         "name": "Onion soup",
         "description": "French onion soup",
         "preparation": """
