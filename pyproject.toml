@@ -11,6 +11,7 @@ packages = [{include = "bmcooking"}]
 python = "^3.10"
 fastapi = "^0.95.2"
 uvicorn = "^0.22.0"
+pydantic = "^1.10.8"
 
 
 [tool.poetry.group.dev.dependencies]

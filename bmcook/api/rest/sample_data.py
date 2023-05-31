@@ -63,3 +63,10 @@ RECIPES = [
         ]
     },
 ]
+
+
+def get_fake_recipe(recipe_id: int):
+    for recipe in RECIPES:
+        if recipe["id"] == recipe_id:
+            return recipe
+    return None
