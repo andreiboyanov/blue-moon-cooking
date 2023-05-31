@@ -2,6 +2,13 @@
 
 This repository contains an application for cooking recipes management
 
+
+```
+Note
+----
+No authentication nor authorization mechanisms in this version version!
+```
+
 ## Build
 
 The app is running within Docker containers. To build the containers do the following:
