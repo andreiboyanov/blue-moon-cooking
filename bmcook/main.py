@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
-from api.rest import recipe
+from bmcook.api.rest import recipe
 
 app = FastAPI()
 
@@ -12,6 +12,9 @@ def root():
     return RedirectResponse(url="/recipes", status_code=301)
 
 
-if __name__ == "__main__":
+def main():
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+if __name__ == "__main__":
+    main()
