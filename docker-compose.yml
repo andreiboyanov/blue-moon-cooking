@@ -1,17 +1,17 @@
 version: '3'
 services:
-#  bmcook:
-#    build:
-#      context: .
-#    environment:
-#      PYTHONUNBUFFERED: 1
-#      POSTGRES_USER:
-#      POSTGRES_PASSWORD:
-#    ports:
-#      - ${BMCOOK_HTTPS_PORT}:443
-#    depends_on:
-#      - db
-#    restart: on-failure
+  bmcook:
+    build:
+      context: .
+    environment:
+      PYTHONUNBUFFERED: 1
+      POSTGRES_USER:
+      POSTGRES_PASSWORD:
+    ports:
+      - ${BMCOOK_HTTPS_PORT}:8000
+    depends_on:
+      - db
+    restart: on-failure
 
   db:
     image: postgres:15
