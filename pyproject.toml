@@ -5,7 +5,7 @@ description = "The cooking central"
 authors = ["Andrei Boyanov <andrei.boyanov@gmail.com>"]
 license = "GPL"
 readme = "README.md"
-packages = [{include = "bmcooking"}]
+packages = [{include = "bmcook"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
