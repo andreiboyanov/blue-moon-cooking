@@ -1,0 +1,27 @@
+name: Blue Moon Cooking
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: Test with pytest
+      run: |
+        cp .env-sample .env
+        docker-compose up -d
+        docker-compose exec -T bmcook pytest -v bmcook/tests
