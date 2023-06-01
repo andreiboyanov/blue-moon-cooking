@@ -24,4 +24,4 @@ jobs:
       run: |
         cp .env-sample .env
         docker-compose up -d
-        docker-compose exec bmcook pytest -v bmcook/tests
+        docker-compose exec -T bmcook pytest -v bmcook/tests
