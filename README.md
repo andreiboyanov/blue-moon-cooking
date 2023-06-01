@@ -1,3 +1,5 @@
+![example workflow](https://github.com/andreiboyanov/blue-moon-cooking/actions/workflows/python-app.yml/badge.svg)
+
 # Blue moon cooking
 
 This repository contains an application for cooking recipes management
