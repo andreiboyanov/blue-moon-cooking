@@ -1,4 +1,4 @@
-RECIPES = [
+fake_recipes = [
     {
         "id": 1,
         "name": "Meat balls",
@@ -63,3 +63,24 @@ RECIPES = [
         ]
     },
 ]
+
+
+def get_fake_recipe(recipe_id: int):
+    for recipe in fake_recipes:
+        if recipe["id"] == recipe_id:
+            return recipe
+    return None
+
+
+def delete_fake_recipe(recipe_id: int):
+    for index, recipe in enumerate(fake_recipes):
+        if recipe["id"] == recipe_id:
+            fake_recipes.pop(index)
+
+
+def replace_fake_recipe(recipe_id: int, new_recipe):
+    for index, recipe in enumerate(fake_recipes):
+        if recipe["id"] == recipe_id:
+            fake_recipes[index] = new_recipe
+            return True
+    return False
