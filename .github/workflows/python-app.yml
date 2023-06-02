@@ -25,3 +25,9 @@ jobs:
         cp .env-sample .env
         docker-compose up -d
         docker-compose exec -T bmcook pytest -v bmcook/tests
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      if: always()
+      with:
+        files: |
+          test-results/**/*.xml
