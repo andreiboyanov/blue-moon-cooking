@@ -12,6 +12,8 @@ services:
     depends_on:
       - db
     restart: on-failure
+    volumes:
+      - ./test-results/:/tmp/test-results/
 
   db:
     image: postgres:15
