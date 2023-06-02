@@ -1,4 +1,5 @@
 ![example workflow](https://github.com/andreiboyanov/blue-moon-cooking/actions/workflows/python-app.yml/badge.svg)
+![test results](https://gist.githubusercontent.com/andreiboyanov/e4998217decaff96c097bf27b31417bf/raw/0a5a820dc7d9b011209de625ab34d16af934ec56/badge.svg)
 
 # Blue moon cooking
 
