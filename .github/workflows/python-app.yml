@@ -28,6 +28,7 @@ jobs:
         docker-compose up -d
         docker-compose exec -T bmcook pytest  --junitxml=/tmp/test-results/pytest-results.xml -v bmcook/tests
     - name: Publish Test Results
+      id: test-results
       uses: EnricoMi/publish-unit-test-result-action@v2
       if: always()
       with:
