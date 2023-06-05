@@ -1,7 +1,7 @@
 drop table if exists tags cascade;
 create table tags
 (
-    id  integer not null
+    id  serial not null
         constraint tag_pk
             primary key,
     tag char(50)    not null
@@ -13,7 +13,7 @@ alter table tags owner to moon;
 drop table if exists ingredients cascade;
 create table ingredients
 (
-    id          integer not null
+    id  serial not null
         constraint ingredients_pk
             primary key,
     name        char(50)
@@ -26,7 +26,7 @@ alter table ingredients owner to moon;
 drop table if exists recipes cascade ;
 create table recipes
 (
-    id          integer not null
+    id  serial not null
         constraint recipe_pk
             primary key,
     name        char(50)
