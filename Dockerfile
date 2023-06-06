@@ -12,13 +12,6 @@ COPY . ./
 RUN poetry install --no-interaction --no-ansi -vvv
 RUN cat
 
-
-FROM python as system_packages
-RUN apt update
-RUN apt upgrade --yes
-RUN apt install postgresql-client --yes
-
-
 FROM python as runtime
 ENV PATH="/app/.venv/bin:$PATH"
 COPY --from=poetry /app /app
