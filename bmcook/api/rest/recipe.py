@@ -1,62 +1,70 @@
-from fastapi import APIRouter
-from fastapi.responses import Response
+from typing import List
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
+from bmcook.core import Recipes
+from bmcook.exceptions import RecipeDataError
 
-from .sample_data import (
-    fake_recipes, get_fake_recipe, delete_fake_recipe, replace_fake_recipe
-)
 
 router = APIRouter()
+
+
+class Ingredient(BaseModel):
+    id: int
+    name: int
+    quantity: str | None = None
+    unit: str | None = None
 
 
 class Recipe(BaseModel):
     id: int
     name: str
     description: str | None = None
-    tags: list | None = None
-    ingredients: list | None = None
+    preparation: str | None = None
+    tags: List[str] = []
+    ingredients: List[Ingredient] = []
 
 
 @router.get("/")
-def get_recipes(skip: int = 0, limit: int = 10):
-    return fake_recipes[skip:skip + limit]
+async def get_recipes(skip: int = 0, limit: int = 10):
+    return Recipes().get_recipes(skip, limit) or []
 
 
 @router.get("/{recipe_id}")
-def get_recipe(recipe_id: int):
-    recipe = get_fake_recipe(recipe_id)
-    return recipe or Response(status_code=404)
+async def get_recipe(recipe_id: int):
+    recipe = Recipes().get_recipe(recipe_id)
+    if not recipe:
+        raise HTTPException(status_code=404)
+    return recipe
 
 
 @router.post("/")
-def add_recipe(recipe: Recipe):
-    existing_recipe = get_fake_recipe(recipe.id)
-    if existing_recipe:
-        return Response(status_code=409)
-    fake_recipes.append(recipe.dict())
+async def add_recipe(recipe: Recipe):
+    try:
+        Recipes().add_recipe(recipe.dict())
+    except RecipeDataError as error:
+        raise HTTPException(status_code=409, detail=str(error))
 
 
 @router.delete("/{recipe_id}")
-def delete_recipe(recipe_id: int):
-    delete_fake_recipe(recipe_id)
+async def delete_recipe(recipe_id: int):
+    Recipes().delete_recipe(recipe_id)
 
 
 @router.put("/{recipe_id}")
-def replace_recipe(recipe_id: int, new_recipe: Recipe):
-    if recipe_id != new_recipe.id:
-        return Response(status_code=422)
-    result = replace_fake_recipe(recipe_id, new_recipe.dict())
+async def replace_recipe(recipe_id: int, new_recipe: Recipe):
+    try:
+        result = Recipes().replace_recipe(recipe_id, new_recipe.dict())
+    except RecipeDataError as error:
+        raise HTTPException(status_code=409, detail=str(error))
     if result is False:
-        return Response(status_code=404)
+        raise HTTPException(status_code=404)
 
 
 @router.patch("/{recipe_id}")
-def modify_recipy(recipe_id: int, updates: dict):
-    recipe = get_fake_recipe(recipe_id)
-    if not recipe:
-        return Response(status_code=404)
-    for key, value in updates.items():
-        if key == "id":
-            continue
-        if key in recipe:
-            recipe[key] = value
+async def modify_recipy(recipe_id: int, updates: dict):
+    try:
+        result = Recipes().update_recipe(recipe_id, updates)
+    except RecipeDataError as error:
+        raise HTTPException(status_code=409, detail=str(error))
+    if result is False:
+        raise HTTPException(status_code=404)

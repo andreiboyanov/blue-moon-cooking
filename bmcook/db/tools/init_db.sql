@@ -1,22 +1,22 @@
 drop table if exists tags cascade;
 create table tags
 (
-    tag char    not null
-        constraint tags_pk
-            unique,
-    id  integer not null
+    id  serial not null
         constraint tag_pk
-            primary key
+            primary key,
+    tag varchar(50)    not null
+        constraint tags_pk
+            unique
 );
 alter table tags owner to moon;
 
 drop table if exists ingredients cascade;
 create table ingredients
 (
-    id          integer not null
+    id  serial not null
         constraint ingredients_pk
             primary key,
-    name        char
+    name        varchar(50)
         constraint ingredients_pk2
             unique,
     description integer
@@ -26,10 +26,10 @@ alter table ingredients owner to moon;
 drop table if exists recipes cascade ;
 create table recipes
 (
-    id          integer not null
+    id  serial not null
         constraint recipe_pk
             primary key,
-    name        char
+    name        varchar(50)
         constraint recipe_pk2
             unique,
     description varchar,
@@ -42,12 +42,14 @@ create table recipe_ingredients
 (
     recipe_id     integer not null
         constraint recipe_ingredients_recipe_id_fk
-            references recipes,
+            references recipes
+            on delete cascade,
     ingredient_id integer not null
         constraint recipe_ingredients_ingredients_id_fk
-            references ingredients,
+            references ingredients
+            on delete cascade,
     quantity      integer,
-    unit          integer,
+    unit          varchar(50),
     constraint recipe_ingredients_pk
         primary key (recipe_id, ingredient_id)
 );
