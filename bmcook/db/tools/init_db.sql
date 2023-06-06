@@ -4,7 +4,7 @@ create table tags
     id  serial not null
         constraint tag_pk
             primary key,
-    tag char(50)    not null
+    tag varchar(50)    not null
         constraint tags_pk
             unique
 );
@@ -16,7 +16,7 @@ create table ingredients
     id  serial not null
         constraint ingredients_pk
             primary key,
-    name        char(50)
+    name        varchar(50)
         constraint ingredients_pk2
             unique,
     description integer
@@ -29,7 +29,7 @@ create table recipes
     id  serial not null
         constraint recipe_pk
             primary key,
-    name        char(50)
+    name        varchar(50)
         constraint recipe_pk2
             unique,
     description varchar,
@@ -42,12 +42,14 @@ create table recipe_ingredients
 (
     recipe_id     integer not null
         constraint recipe_ingredients_recipe_id_fk
-            references recipes,
+            references recipes
+            on delete cascade,
     ingredient_id integer not null
         constraint recipe_ingredients_ingredients_id_fk
-            references ingredients,
+            references ingredients
+            on delete cascade,
     quantity      integer,
-    unit          char(50),
+    unit          varchar(50),
     constraint recipe_ingredients_pk
         primary key (recipe_id, ingredient_id)
 );
