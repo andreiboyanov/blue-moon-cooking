@@ -20,8 +20,11 @@ def test_get_recipes_with_limit_1(test_client):
 
 
 def test_get_recipes_starting_from_the_second(test_client):
-    result = test_client.get("http://localhost:8000/recipes/?skip=1&limit=1")
-    assert result.json()[0]["id"] == 2
+    all_recipes = test_client.get("http://localhost:8000/recipes/").json()
+    one_recipe = \
+        test_client.get("http://localhost:8000/recipes/?skip=1&limit=1").json()[
+            0]
+    assert one_recipe["id"] == all_recipes[1]["id"]
 
 
 def test_get_recipe(test_client):
@@ -30,20 +33,25 @@ def test_get_recipe(test_client):
 
 
 def test_get_recipe_non_existent(test_client):
-    result = test_client.get("http://localhost:8000/recipes/3")
+    result = test_client.get("http://localhost:8000/recipes/9999999")
     assert result.status_code == 404
 
 
 def test_create_recipe(test_client):
+    old_recipe_count = len(
+        test_client.get("http://localhost:8000/recipes/").json()
+    )
     result = test_client.post(
         "http://localhost:8000/recipes/",
         json={"id": 3, "name": "Some new recipe"}
     )
     assert result.status_code == 200
-    result = test_client.get("http://localhost:8000/recipes/3")
-    assert result.status_code == 200
-    assert result.json()["id"] == 3
-    assert result.json()["name"] == "Some new recipe"
+    recipes = test_client.get("http://localhost:8000/recipes/").json()
+    new_recipe_count = len(recipes)
+    assert new_recipe_count == old_recipe_count + 1
+    last_recipe = recipes[-1]
+    assert last_recipe["id"] == 3
+    assert last_recipe["name"] == "Some new recipe"
 
 
 def test_create_recipe_with_existing_id(test_client):
@@ -62,14 +70,21 @@ def test_delete_recipe(test_client):
 
 
 def test_update_recipe(test_client):
+    all_recipes = test_client.get("http://localhost:8000/recipes/").json()
+    update_id = all_recipes[0]["id"]
     result = test_client.put(
-        "http://localhost:8000/recipes/1",
-        json={"id": 1, "name": "Some new recipe name"}
+        f"http://localhost:8000/recipes/{update_id}",
+        json={
+            "id": update_id,
+            "name": "Some new recipe name for test_update_recipe"
+        }
     )
     assert result.status_code == 200
-    result = test_client.get("http://localhost:8000/recipes/1")
+    result = test_client.get(f"http://localhost:8000/recipes/{update_id}")
     assert result.status_code == 200
-    assert result.json()["name"] == "Some new recipe name"
+    assert result.json()[
+               "name"
+           ] == "Some new recipe name for test_update_recipe"
 
 
 def test_update_recipe_non_existing(test_client):
@@ -106,4 +121,3 @@ def test_patch_recipe_non_existent(test_client):
         json={"id": 99, "description": "Some new recipe description"}
     )
     assert result.status_code == 404
-
