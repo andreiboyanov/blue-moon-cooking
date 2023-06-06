@@ -162,17 +162,16 @@ class RecipeDB:
         """
         sql = """
         update recipes set """
-        for field in UPDATABLE_FIELDS:
-            if field in updates:
-                sql += "%s = %s"
-        sql += ",".join([field + " = %s" for field in UPDATABLE_FIELDS])
+        sql += ",".join(
+            [field + " = %s" for field in updates if field in UPDATABLE_FIELDS])
         sql += """
         where id = %s
         """
         try:
             self.cursor.execute(
                 sql,
-                [updates.get(field) for field in UPDATABLE_FIELDS] +
+                [updates.get(field) for field in updates if
+                 field in UPDATABLE_FIELDS] +
                 [recipe_id]
             )
             self.connection.commit()

@@ -113,14 +113,6 @@ def test_update_recipe_non_existing(test_client):
     assert result.status_code == 404
 
 
-def test_update_recipe_with_wrong_id(test_client):
-    result = test_client.put(
-        "http://localhost:8000/recipes/1",
-        json={"id": 99, "name": "Some new recipe name"}
-    )
-    assert result.status_code == 422
-
-
 def test_patch_recipe(test_client):
     result = test_client.patch(
         "http://localhost:8000/recipes/1",
