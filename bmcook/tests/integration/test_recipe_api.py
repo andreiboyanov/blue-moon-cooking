@@ -1,12 +1,30 @@
 import pytest
-import json
+import psycopg2
 from fastapi.testclient import TestClient
 from bmcook.main import app
+from bmcook.db import config
 
 
 @pytest.fixture(scope="module")
 def test_client():
     return TestClient(app)
+
+
+@pytest.fixture(scope="module", autouse=True)
+def fixture_init_db():
+    connection = psycopg2.connect(
+        database=config.db_name,
+        user=config.db_user,
+        password=config.db_password,
+        host=config.db_host,
+        port=config.db_port
+    )
+    cursor = connection.cursor()
+    cursor.execute(open(r"bmcook/db/tools/init_db.sql", "r").read())
+    cursor.execute(open(r"bmcook/tests/data/demo_data.sql", "r").read())
+    connection.commit()
+    cursor.close()
+    connection.close()
 
 
 def test_get_recipes(test_client):
