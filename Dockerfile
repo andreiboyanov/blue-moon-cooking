@@ -13,6 +13,8 @@ RUN poetry install --no-interaction --no-ansi -vvv
 RUN cat
 
 FROM python as runtime
+RUN apt update
+RUN apt install --yes postgresql-client
 ENV PATH="/app/.venv/bin:$PATH"
 COPY --from=poetry /app /app
-CMD uvicorn bmcook.main:app
+CMD uvicorn --host 0.0.0.0 bmcook.main:app
