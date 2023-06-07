@@ -34,6 +34,18 @@ Start with the following command:
 docker-compose up -d
 ```
 
+## Creating a database
+
+In this version of the product you have to create the application database. 
+To do so, execute the following commands:
+
+```shell
+ source .env && export $(cut -d= -f1 < .env)
+ docker-compose exec bmcook cat bmcook/db/tools/init_db.sql | psql -U $POSTGRES_USER -h $POSTGRES_HOST -p $POSTGRES_PORT $POSTGRES_DATABASE
+ docker-compose exec bmcook cat bmcook/tests/data/demo_data.sql | psql -U $POSTGRES_USER -h $POSTGRES_HOST -p $POSTGRES_PORT $POSTGRES_DATABASE
+ ```
+ This will also install some demo data.
+
 To test the installation, open /docs on the server where you`ve installed the application in your browser. Keep in mind adding the selected port. You must see the OpenAPI UI.
 For instance, if you installed it locally on the default port 8000, open the folowing url:
 
