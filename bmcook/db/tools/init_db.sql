@@ -33,6 +33,7 @@ create table recipes
         constraint recipe_pk2
             unique,
     description varchar,
+    cooking_time int,
     preparation varchar
 );
 alter table recipes owner to moon;
