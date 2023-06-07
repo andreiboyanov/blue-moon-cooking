@@ -4,14 +4,15 @@ from typing import TypedDict, Dict, List
 from . import config
 from bmcook.exceptions import RecipeDataError, RecipeIntegrityError
 
-UPDATABLE_FIELDS = ['name', 'description', 'preparation']
-M2M_FIELDS = ['ingredients', 'tags']
+UPDATABLE_FIELDS = ["name", "description", "cooking_time", "preparation"]
+M2M_FIELDS = ["ingredients", "tags"]
 
 
 class RecipeType(TypedDict):
     id: int
     name: str
     description: str
+    cooking_time: int
     preparation: str
     tags: List[str]
     ingredients: List[Dict[str, str]]
@@ -70,8 +71,9 @@ class RecipeDB:
                 tag["tag"] for tag in self.cursor.fetchall()
             ]
 
-    def get_recipes(self, skip: int = 0, limit: int = 10) -> List[
-                                                                 RecipeType] or None:
+    def get_recipes(self, skip: int = 0, limit: int = 10) -> (
+            List[RecipeType] or None
+    ):
         sql = """
             select * from recipes
             order by id
@@ -97,12 +99,14 @@ class RecipeDB:
         sql = """
             with 
             
-            ingredient_vectors as (select recipe_id, string_agg(name, ' ') ingredient_names from ingredients
+            ingredient_vectors as (select recipe_id, string_agg(name, ' ') 
+            ingredient_names from ingredients
             inner join recipe_ingredients ri
                 on ingredients.id = ri.ingredient_id
             group by recipe_id),
             
-            tag_vectors as (select recipe_id, string_agg(tag, ' ') tag_names from tags
+            tag_vectors as (select recipe_id, string_agg(tag, ' ') 
+            tag_names from tags
             inner join recipe_tags rt
                 on tags.id = rt.tag_id
             group by recipe_id)
@@ -121,10 +125,12 @@ class RecipeDB:
                     || ' '
                     || tag_names
                 ) @@ to_tsquery(%s)
+            offset %s
+            limit %s
             ;
         """
         ts_query = query.replace(" ", "|")
-        self.cursor.execute(sql, (ts_query,))
+        self.cursor.execute(sql, (ts_query, skip, limit))
         rows = self.cursor.fetchall()
         self._add_m2m_to_recipes(rows)
         return rows or None
@@ -133,14 +139,20 @@ class RecipeDB:
                    recipe_id: int or None = None) -> None:
         if recipe_id is None:
             sql = """
-                insert into recipes (name, description, preparation) values (
-                    %(name)s, %(description)s, %(preparation)s
+                insert into recipes (
+                    name, description, cooking_time, preparation
+                ) values (
+                    %(name)s, %(description)s, 
+                    %(cooking_time)s, %(preparation)s
                 )
             """
         else:
             sql = """
-                insert into recipes (id, name, description, preparation) values (
-                    %(id)s, %(name)s, %(description)s, %(preparation)s
+                insert into recipes (
+                id, name, description, cooking_time, preparation
+                ) values (
+                    %(id)s, %(name)s, %(description)s, 
+                    %(cooking_time)s, %(preparation)s
                 )
             """
 
