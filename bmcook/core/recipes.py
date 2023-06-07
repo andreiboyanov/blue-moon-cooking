@@ -8,13 +8,19 @@ class Recipes:
 
     def get_recipes(
         self, skip: int = 0, limit: int = 10,
-        search_words: str or None = None
+        search_words: str or None = None,
+        products: str | None = None,
+        tags: str | None = None
     ) -> List[RecipeType] or None:
         with RecipeDB() as db:
-            if search_words is None:
-                return db.get_recipes(skip, limit)
-            else:
+            if search_words is not None:
                 return db.search_recipes_by_keywords(search_words, skip, limit)
+            if products is not None:
+                return db.search_recipes_by_products(products, skip, limit)
+            if tags is not None:
+                return db.search_recipes_by_tags(tags, skip, limit)
+            else:
+                return db.get_recipes(skip, limit)
 
     def get_recipe(self, recipe_id: int) -> RecipeType or None:
         with RecipeDB() as db:
