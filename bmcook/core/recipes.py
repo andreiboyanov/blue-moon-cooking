@@ -5,6 +5,7 @@ from typing import List
 class Recipes:
     def __init__(self):
         pass
+
     def get_recipes(
         self, skip: int = 0, limit: int = 10,
         search_words: str or None = None
