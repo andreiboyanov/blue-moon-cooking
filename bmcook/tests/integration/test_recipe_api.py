@@ -31,6 +31,30 @@ def test_get_recipes(test_client):
     result = test_client.get("http://localhost:8000/recipes/")
     assert len(result.json()) == 2
 
+def test_get_recipes_by_keywords(test_client):
+    result = test_client.get(
+        "http://localhost:8000/recipes/?search_words=french soup"
+    )
+    recipes = result.json()
+    assert len(recipes) == 1
+    assert recipes[0]["name"] == "Onion soup"
+
+
+def test_get_recipes_by_products(test_client):
+    result = test_client.get(
+        "http://localhost:8000/recipes/?products=breadcrumbs"
+    )
+    recipes = result.json()
+    assert len(recipes) == 1
+    assert recipes[0]["name"] == "Meat balls"
+
+def test_get_recipes_by_tags(test_client):
+    result = test_client.get(
+        "http://localhost:8000/recipes/?tags=french soup"
+    )
+    recipes = result.json()
+    assert len(recipes) == 1
+    assert recipes[0]["name"] == "Onion soup"
 
 def test_get_recipes_with_limit_1(test_client):
     result = test_client.get("http://localhost:8000/recipes/?limit=1")

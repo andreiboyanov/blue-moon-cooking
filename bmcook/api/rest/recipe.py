@@ -26,8 +26,13 @@ class Recipe(BaseModel):
 
 
 @router.get("/")
-async def get_recipes(skip: int = 0, limit: int = 10):
-    return Recipes().get_recipes(skip, limit) or []
+async def get_recipes(
+        skip: int = 0, limit: int = 10,
+        search_words: str | None = None,
+        products: str | None = None,
+        tags: str | None = None
+):
+    return Recipes().get_recipes(skip, limit, search_words, products, tags) or []
 
 
 @router.get("/{recipe_id}")

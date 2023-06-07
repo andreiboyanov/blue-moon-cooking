@@ -148,6 +148,56 @@ class RecipeDB:
         self._add_m2m_to_recipes(rows)
         return rows or None
 
+    def search_recipes_by_products(self, products: str, skip: int = 0,
+                                   limit: int = 10) -> List[RecipeType] or None:
+        sql = """
+            with 
+
+            ingredient_vectors as (select recipe_id, string_agg(name, ' ') 
+            ingredient_names from ingredients
+            inner join recipe_ingredients ri
+                on ingredients.id = ri.ingredient_id
+            group by recipe_id)
+
+            select r.* from recipes r
+                     inner join ingredient_vectors i
+                        on r.id = i.recipe_id
+            where to_tsvector(ingredient_names) @@ to_tsquery(%s)
+            offset %s
+            limit %s
+            ;
+        """
+        ts_query = products.replace(" ", "|")
+        self.cursor.execute(sql, (ts_query, skip, limit))
+        rows = self.cursor.fetchall()
+        self._add_m2m_to_recipes(rows)
+        return rows or None
+
+    def search_recipes_by_tags(self, tags: str, skip: int = 0,
+                                   limit: int = 10) -> List[RecipeType] or None:
+        sql = """
+            with 
+
+            tag_vectors as (select recipe_id, string_agg(tag, ' ') 
+            tag_names from tags
+            inner join recipe_tags rt
+                on tags.id = rt.tag_id
+            group by recipe_id)
+
+            select r.* from recipes r
+                     inner join tag_vectors t
+                        on r.id = t.recipe_id
+            where to_tsvector(tag_names) @@ to_tsquery(%s)
+            offset %s
+            limit %s
+            ;
+        """
+        ts_query = tags.replace(" ", "|")
+        self.cursor.execute(sql, (ts_query, skip, limit))
+        rows = self.cursor.fetchall()
+        self._add_m2m_to_recipes(rows)
+        return rows or None
+
     def add_recipe(self, recipe: RecipeType,
                    recipe_id: int or None = None) -> None:
         if recipe_id is None:
