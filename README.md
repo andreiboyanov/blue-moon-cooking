@@ -16,7 +16,7 @@ No authentication nor authorization mechanisms in this version version!
 
 ## Project organisation
 
-- the repository: https://github.com/andreiboyanov/blue-moon-cooking
+- The repository: https://github.com/andreiboyanov/blue-moon-cooking
 - Open issues: https://github.com/andreiboyanov/blue-moon-cooking/issues
 - Project board: https://github.com/users/andreiboyanov/projects/1
 
