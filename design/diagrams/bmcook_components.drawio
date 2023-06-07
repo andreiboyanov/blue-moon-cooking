@@ -1,14 +1,14 @@
-<mxfile host="app.diagrams.net" modified="2023-06-07T07:19:01.084Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36" etag="XQo1u-0OiJlgUK5n5pqE" version="21.3.7" type="github">
+<mxfile host="app.diagrams.net" modified="2023-06-07T07:36:26.033Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36" etag="zZsyOUqWzLcmop2rVvo9" version="21.3.7" type="github">
   <diagram name="Page-1" id="5f0bae14-7c28-e335-631c-24af17079c00">
-    <mxGraphModel dx="2556" dy="678" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" background="none" math="0" shadow="0">
+    <mxGraphModel dx="2340" dy="578" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" background="none" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="8ePoTEt87gBDQkdjrsIu-66" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.526;entryY=0.209;entryDx=0;entryDy=0;entryPerimeter=0;curved=1;shape=link;" edge="1" parent="1" source="8ePoTEt87gBDQkdjrsIu-54" target="8ePoTEt87gBDQkdjrsIu-60">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
         <mxCell id="8ePoTEt87gBDQkdjrsIu-54" value="Recipes core" style="verticalAlign=top;align=left;spacingTop=8;spacingLeft=2;spacingRight=12;shape=cube;size=10;direction=south;fontStyle=4;html=1;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="90" y="70" width="700" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="8ePoTEt87gBDQkdjrsIu-66" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.526;entryY=0.209;entryDx=0;entryDy=0;entryPerimeter=0;curved=1;shape=link;" edge="1" parent="1" source="8ePoTEt87gBDQkdjrsIu-54" target="8ePoTEt87gBDQkdjrsIu-60">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="8ePoTEt87gBDQkdjrsIu-24" value="&lt;b&gt;:Tags&lt;/b&gt;" style="html=1;dropTarget=0;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="140" y="330" width="180" height="90" as="geometry" />
@@ -26,6 +26,9 @@
             <mxPoint x="-27" y="7" as="offset" />
           </mxGeometry>
         </mxCell>
+        <mxCell id="8ePoTEt87gBDQkdjrsIu-79" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;shape=link;" edge="1" parent="1" source="8ePoTEt87gBDQkdjrsIu-28" target="8ePoTEt87gBDQkdjrsIu-49">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
         <mxCell id="8ePoTEt87gBDQkdjrsIu-28" value="&lt;b&gt;:Recipes&lt;/b&gt;" style="html=1;dropTarget=0;whiteSpace=wrap;" vertex="1" parent="1">
           <mxGeometry x="320" y="110" width="180" height="90" as="geometry" />
         </mxCell>
@@ -34,24 +37,19 @@
             <mxPoint x="-27" y="7" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="8ePoTEt87gBDQkdjrsIu-47" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="8ePoTEt87gBDQkdjrsIu-46">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="380" y="210" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="8ePoTEt87gBDQkdjrsIu-48" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.532;entryY=-0.026;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="8ePoTEt87gBDQkdjrsIu-46" target="8ePoTEt87gBDQkdjrsIu-24">
+        <mxCell id="8ePoTEt87gBDQkdjrsIu-77" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.25;entryY=1;entryDx=0;entryDy=0;shape=link;" edge="1" parent="1" source="8ePoTEt87gBDQkdjrsIu-46" target="8ePoTEt87gBDQkdjrsIu-28">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="8ePoTEt87gBDQkdjrsIu-46" value="" style="shape=providedRequiredInterface;html=1;verticalLabelPosition=bottom;sketch=0;" vertex="1" parent="1">
-          <mxGeometry x="260" y="230" width="20" height="20" as="geometry" />
-        </mxCell>
-        <mxCell id="8ePoTEt87gBDQkdjrsIu-50" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.718;entryY=1.027;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="8ePoTEt87gBDQkdjrsIu-49" target="8ePoTEt87gBDQkdjrsIu-28">
+        <mxCell id="8ePoTEt87gBDQkdjrsIu-83" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;shape=link;" edge="1" parent="1" source="8ePoTEt87gBDQkdjrsIu-46" target="8ePoTEt87gBDQkdjrsIu-24">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="8ePoTEt87gBDQkdjrsIu-51" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="8ePoTEt87gBDQkdjrsIu-49" target="8ePoTEt87gBDQkdjrsIu-26">
+        <mxCell id="8ePoTEt87gBDQkdjrsIu-46" value="Add/remove tags" style="shape=providedRequiredInterface;html=1;verticalLabelPosition=bottom;sketch=0;" vertex="1" parent="1">
+          <mxGeometry x="250" y="260" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="8ePoTEt87gBDQkdjrsIu-80" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;shape=link;" edge="1" parent="1" source="8ePoTEt87gBDQkdjrsIu-49" target="8ePoTEt87gBDQkdjrsIu-26">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="8ePoTEt87gBDQkdjrsIu-49" value="" style="shape=providedRequiredInterface;html=1;verticalLabelPosition=bottom;sketch=0;" vertex="1" parent="1">
+        <mxCell id="8ePoTEt87gBDQkdjrsIu-49" value="Manage recipe&#39;s ingredients" style="shape=providedRequiredInterface;html=1;verticalLabelPosition=bottom;sketch=0;" vertex="1" parent="1">
           <mxGeometry x="450" y="270" width="20" height="20" as="geometry" />
         </mxCell>
         <mxCell id="8ePoTEt87gBDQkdjrsIu-52" value="&lt;b&gt;:REST API&lt;/b&gt;" style="html=1;dropTarget=0;whiteSpace=wrap;" vertex="1" parent="1">
