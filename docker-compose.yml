@@ -2,15 +2,22 @@ version: '3'
 services:
   bmcook:
     build:
+      args:
+        POSTGRES_USER: ${POSTGRES_USER}
+        POSTGRES_HOST: ${POSTGRES_HOST}
+        POSTGRES_DATABASE: ${POSTGRES_DATABASE}
+        POSTGRES_PORT: ${POSTGRES_PORT}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        PGPASSWORD: ${POSTGRES_PASSWORD}
       context: .
     environment:
       PYTHONUNBUFFERED: 1
-      PG_USER:
-      PG_PASSWORD:
-      PG_HOST:
-      PG_DB:
-      PG_PORT:
-      PG_PASS:
+      POSTGRES_USER:
+      POSTGRES_HOST:
+      POSTGRES_DATABASE:
+      POSTGRES_PORT:
+      POSTGRES_PASSWORD:
+      PGPASSWORD: ${POSTGRES_PASSWORD}
       BMCOOK_HTTPS_PORT:
 
     ports:
@@ -24,9 +31,9 @@ services:
   db:
     image: postgres:15
     environment:
-      POSTGRES_USER: ${PG_USER}
-      POSTGRES_PASSWORD: ${PG_PASS}
+      POSTGRES_USER:
+      POSTGRES_PASSWORD:
     ports:
-      - ${PG_PORT}:5432
+      - ${POSTGRES_PORT}:5432
     restart: always
     shm_size: 4gb
