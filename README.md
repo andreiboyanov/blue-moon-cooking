@@ -22,7 +22,7 @@ No authentication nor authorization mechanisms in this version version!
 
 ## Global view of the system
 
-![comoponent diagram]([https://github.com/andreiboyanov/blue-moon-cooking/](https://raw.githubusercontent.com/andreiboyanov/blue-moon-cooking/main/design/diagrams/bmcook_components.drawio.png))
+![comoponent diagram](https://raw.githubusercontent.com/andreiboyanov/blue-moon-cooking/main/design/diagrams/bmcook_components.drawio.png)
 
 
 ## Build
