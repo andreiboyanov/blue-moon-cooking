@@ -11,7 +11,7 @@ router = APIRouter()
 class Ingredient(BaseModel):
     id: int | None = None
     name: str
-    quantity: str | None = None
+    quantity: int | None = None
     unit: str | None = None
 
 

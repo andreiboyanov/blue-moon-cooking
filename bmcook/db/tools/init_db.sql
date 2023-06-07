@@ -19,7 +19,7 @@ create table ingredients
     name        varchar(50)
         constraint ingredients_pk2
             unique,
-    description integer
+    description varchar
 );
 alter table ingredients owner to moon;
 

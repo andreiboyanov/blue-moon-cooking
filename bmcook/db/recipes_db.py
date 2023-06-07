@@ -8,6 +8,13 @@ UPDATABLE_FIELDS = ["name", "description", "cooking_time", "preparation"]
 M2M_FIELDS = ["ingredients", "tags"]
 
 
+class IngredientType(TypedDict):
+    id: int
+    name: str
+    quantity: int
+    unit: str
+
+
 class RecipeType(TypedDict):
     id: int
     name: str
@@ -15,7 +22,7 @@ class RecipeType(TypedDict):
     cooking_time: int
     preparation: str
     tags: List[str]
-    ingredients: List[Dict[str, str]]
+    ingredients: List[IngredientType]
 
 
 class RecipeDB:
@@ -145,6 +152,7 @@ class RecipeDB:
                     %(name)s, %(description)s, 
                     %(cooking_time)s, %(preparation)s
                 )
+                returning id
             """
         else:
             sql = """
@@ -159,6 +167,13 @@ class RecipeDB:
         try:
             recipe.update(id=recipe_id)
             self.cursor.execute(sql, recipe)
+            if recipe_id is None:
+                result = self.cursor.fetchall()
+                recipe_id = result[0]["id"]
+            if "ingredients" in recipe:
+                self.add_ingredients(recipe_id, recipe["ingredients"])
+            if "tags" in recipe:
+                self.add_tags(recipe_id, recipe["tags"])
             self.connection.commit()
         except psycopg2.IntegrityError as error:
             raise RecipeIntegrityError(error)
@@ -208,11 +223,105 @@ class RecipeDB:
     def delete_recipe(self, recipe_id: int) -> None:
         sql = """
         delete from recipe_ingredients where recipe_id = %s;
-        delete from moon.public.recipe_tags where recipe_id = %s;
+        delete from recipe_tags where recipe_id = %s;
         delete from recipes where id = %s;
         """
         self.cursor.execute(sql, (recipe_id, recipe_id, recipe_id,))
         self.connection.commit()
 
-    def add_ingredients(self):
-        pass
+    def add_ingredients(
+            self, recipe_id: int, ingredients: List[IngredientType]
+    ):
+        sql = """
+            delete from recipe_ingredients where recipe_id = %s
+        """
+        self.cursor.execute(sql, (recipe_id, ))
+        for ingredient in ingredients:
+            ingredient_id = self.get_or_create_ingredient(ingredient)
+            self.add_ingredient_to_recipe(
+                recipe_id, ingredient_id,
+                ingredient["quantity"], ingredient["unit"]
+            )
+
+    def add_tags(
+            self, recipe_id: int, tags: List[str]
+    ):
+        sql = """
+            delete from recipe_tags where recipe_id = %s
+        """
+        self.cursor.execute(sql, (recipe_id, ))
+        for tag in tags:
+            tag_id = self.get_or_create_tag(tag)
+            self.add_tag_to_recipe(recipe_id, tag_id)
+
+    def get_or_create_ingredient(
+            self,
+            ingredient: IngredientType
+    ) -> int:
+        sql = """
+            select * from ingredients
+            where name = %s
+        """
+        self.cursor.execute(sql, (ingredient["name"], ))
+        result = self.cursor.fetchall()
+        if len(result) == 0:
+            ingredient_id = self.add_ingredient(ingredient)
+        else:
+            ingredient_id = result[0]["id"]
+        return ingredient_id
+
+    def add_ingredient(self, ingredient: Dict[str, str]) -> int:
+        sql = """
+            insert into ingredients (name, description)
+            values (%s, %s)
+            returning id
+        """
+        self.cursor.execute(
+            sql, (ingredient.get("name"), ingredient.get("description", ""))
+        )
+        result = self.cursor.fetchall()
+        return result[0]["id"]
+
+    def add_ingredient_to_recipe(
+            self, recipe_id: int, ingredient_id: int,
+            quantity: int, unit: str
+    ) -> None:
+        sql = """
+            insert into recipe_ingredients values (%s, %s, %s, %s)
+        """
+        self.cursor.execute(
+            sql,
+            (recipe_id, ingredient_id, quantity, unit)
+        )
+
+    def get_or_create_tag(self, tag: str) -> int:
+        sql = """
+            select * from tags
+            where tag = %s
+        """
+        self.cursor.execute(sql, (tag, ))
+        result = self.cursor.fetchall()
+        if len(result) == 0:
+            tag_id = self.add_tag(tag)
+        else:
+            tag_id = result[0]["id"]
+        return tag_id
+
+    def add_tag(self, tag: str) -> int:
+        sql = """
+            insert into tags (tag)
+            values (%s)
+            returning id
+        """
+        self.cursor.execute(sql, (tag, ))
+        result = self.cursor.fetchall()
+        return result[0]["id"]
+
+    def add_tag_to_recipe(self, recipe_id: int, tag_id: int,) -> None:
+        sql = """
+            insert into recipe_tags values (%s, %s)
+        """
+        self.cursor.execute(
+            sql,
+            (recipe_id, tag_id)
+        )

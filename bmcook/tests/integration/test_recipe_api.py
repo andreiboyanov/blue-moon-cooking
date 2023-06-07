@@ -143,7 +143,7 @@ def test_recipe_with_all_fields(test_client):
             "preparation": "Description of the preparation",
             "tags": ["tag1", "tag2", "meat"],
             "ingredients": [
-                {"name": "meet", "quantity": 500, "unit": "g"},
+                {"name": "meat", "quantity": 500, "unit": "g"},
                 {"name": "onion", "quantity": 1, "unit": "pcs"},
                 {"name": "product 1", "quantity": 999, "unit": "pcs"},
                 {"name": "product 2", "quantity": None, "unit": None},
@@ -159,3 +159,13 @@ def test_recipe_with_all_fields(test_client):
     assert last_recipe["description"] == "Test recipe with all fields filled in"
     assert last_recipe["cooking_time"] == 999
     assert last_recipe["preparation"] == "Description of the preparation"
+    assert len(last_recipe["ingredients"]) == 4
+    product_names = [product["name"] for product in last_recipe["ingredients"]]
+    assert "meat" in product_names
+    assert "onion" in product_names
+    assert "product 1" in product_names
+    assert "product 2" in product_names
+    assert len(last_recipe["tags"]) == 3
+    assert "tag1" in last_recipe["tags"]
+    assert "tag2" in last_recipe["tags"]
+    assert "meat" in last_recipe["tags"]
