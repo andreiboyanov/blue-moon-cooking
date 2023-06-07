@@ -131,3 +131,31 @@ def test_patch_recipe_non_existent(test_client):
         json={"id": 99, "description": "Some new recipe description"}
     )
     assert result.status_code == 404
+
+
+def test_recipe_with_all_fields(test_client):
+    result = test_client.post(
+        "http://localhost:8000/recipes/",
+        json={
+            "name": "Test recipe",
+            "description": "Test recipe with all fields filled in",
+            "cooking_time": 999,
+            "preparation": "Description of the preparation",
+            "tags": ["tag1", "tag2", "meat"],
+            "ingredients": [
+                {"name": "meet", "quantity": 500, "unit": "g"},
+                {"name": "onion", "quantity": 1, "unit": "pcs"},
+                {"name": "product 1", "quantity": 999, "unit": "pcs"},
+                {"name": "product 2", "quantity": None, "unit": None},
+            ]
+        }
+    )
+    assert result.status_code == 200
+    result = test_client.get("http://localhost:8000/recipes/")
+    assert result.status_code == 200
+    recipes = result.json()
+    last_recipe = recipes[-1]
+    assert last_recipe["name"] == "Test recipe"
+    assert last_recipe["description"] == "Test recipe with all fields filled in"
+    assert last_recipe["cooking_time"] == 999
+    assert last_recipe["preparation"] == "Description of the preparation"
