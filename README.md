@@ -37,7 +37,7 @@ docker-compose up -d
 ## Creating a database
 
 In this version of the product you have to create the application database. 
-To do so, execute the following commands:
+To do so, execute the following commands in the root directoryof the project:
 
 ```shell
  source .env && export $(cut -d= -f1 < .env)
