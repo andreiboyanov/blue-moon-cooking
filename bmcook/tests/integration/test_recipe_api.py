@@ -116,13 +116,24 @@ def test_update_recipe_non_existing(test_client):
 def test_patch_recipe(test_client):
     result = test_client.patch(
         "http://localhost:8000/recipes/1",
-        json={"id": 99, "description": "Some new recipe description"}
+        json={
+            "id": 99,
+            "description": "Some new recipe description",
+            "ingredients": [
+                {"name": "product patch", "quantity": 777, "unit": "kg"}
+            ]
+        }
     )
     assert result.status_code == 200
     result = test_client.get("http://localhost:8000/recipes/1")
+    recipe = result.json()
     assert result.status_code == 200
-    assert result.json()["description"] == "Some new recipe description"
-    assert result.json()["id"] == 1
+    assert recipe["description"] == "Some new recipe description"
+    assert recipe["id"] == 1
+    assert len(recipe["ingredients"]) == 1
+    assert recipe["ingredients"][0]["name"] == "product patch"
+    assert recipe["ingredients"][0]["quantity"] == 777
+    assert recipe["ingredients"][0]["unit"] == "kg"
 
 
 def test_patch_recipe_non_existent(test_client):

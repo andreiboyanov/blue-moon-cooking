@@ -78,6 +78,12 @@ class RecipeDB:
                 tag["tag"] for tag in self.cursor.fetchall()
             ]
 
+    def _update_m2m(self, recipe_id: int, recipe: RecipeType) -> None:
+        if "ingredients" in recipe:
+            self.add_ingredients(recipe_id, recipe["ingredients"])
+        if "tags" in recipe:
+            self.add_tags(recipe_id, recipe["tags"])
+
     def get_recipes(self, skip: int = 0, limit: int = 10) -> (
             List[RecipeType] or None
     ):
@@ -170,10 +176,7 @@ class RecipeDB:
             if recipe_id is None:
                 result = self.cursor.fetchall()
                 recipe_id = result[0]["id"]
-            if "ingredients" in recipe:
-                self.add_ingredients(recipe_id, recipe["ingredients"])
-            if "tags" in recipe:
-                self.add_tags(recipe_id, recipe["tags"])
+            self._update_m2m(recipe_id, recipe)
             self.connection.commit()
         except psycopg2.IntegrityError as error:
             raise RecipeIntegrityError(error)
@@ -201,6 +204,7 @@ class RecipeDB:
                  field in UPDATABLE_FIELDS] +
                 [recipe_id]
             )
+            self._update_m2m(recipe_id, updates)
             self.connection.commit()
         except psycopg2.Error as error:
             raise RecipeDataError(error)
