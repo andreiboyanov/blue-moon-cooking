@@ -4,17 +4,25 @@ from typing import TypedDict, Dict, List
 from . import config
 from bmcook.exceptions import RecipeDataError, RecipeIntegrityError
 
-UPDATABLE_FIELDS = ['name', 'description', 'preparation']
-M2M_FIELDS = ['ingredients', 'tags']
+UPDATABLE_FIELDS = ["name", "description", "cooking_time", "preparation"]
+M2M_FIELDS = ["ingredients", "tags"]
+
+
+class IngredientType(TypedDict):
+    id: int
+    name: str
+    quantity: int
+    unit: str
 
 
 class RecipeType(TypedDict):
     id: int
     name: str
     description: str
+    cooking_time: int
     preparation: str
     tags: List[str]
-    ingredients: List[Dict[str, str]]
+    ingredients: List[IngredientType]
 
 
 class RecipeDB:
@@ -70,8 +78,15 @@ class RecipeDB:
                 tag["tag"] for tag in self.cursor.fetchall()
             ]
 
-    def get_recipes(self, skip: int = 0, limit: int = 10) -> List[
-                                                                 RecipeType] or None:
+    def _update_m2m(self, recipe_id: int, recipe: RecipeType) -> None:
+        if "ingredients" in recipe:
+            self.add_ingredients(recipe_id, recipe["ingredients"])
+        if "tags" in recipe:
+            self.add_tags(recipe_id, recipe["tags"])
+
+    def get_recipes(self, skip: int = 0, limit: int = 10) -> (
+            List[RecipeType] or None
+    ):
         sql = """
             select * from recipes
             order by id
@@ -97,12 +112,14 @@ class RecipeDB:
         sql = """
             with 
             
-            ingredient_vectors as (select recipe_id, string_agg(name, ' ') ingredient_names from ingredients
+            ingredient_vectors as (select recipe_id, string_agg(name, ' ') 
+            ingredient_names from ingredients
             inner join recipe_ingredients ri
                 on ingredients.id = ri.ingredient_id
             group by recipe_id),
             
-            tag_vectors as (select recipe_id, string_agg(tag, ' ') tag_names from tags
+            tag_vectors as (select recipe_id, string_agg(tag, ' ') 
+            tag_names from tags
             inner join recipe_tags rt
                 on tags.id = rt.tag_id
             group by recipe_id)
@@ -121,10 +138,12 @@ class RecipeDB:
                     || ' '
                     || tag_names
                 ) @@ to_tsquery(%s)
+            offset %s
+            limit %s
             ;
         """
         ts_query = query.replace(" ", "|")
-        self.cursor.execute(sql, (ts_query,))
+        self.cursor.execute(sql, (ts_query, skip, limit))
         rows = self.cursor.fetchall()
         self._add_m2m_to_recipes(rows)
         return rows or None
@@ -133,20 +152,31 @@ class RecipeDB:
                    recipe_id: int or None = None) -> None:
         if recipe_id is None:
             sql = """
-                insert into recipes (name, description, preparation) values (
-                    %(name)s, %(description)s, %(preparation)s
+                insert into recipes (
+                    name, description, cooking_time, preparation
+                ) values (
+                    %(name)s, %(description)s, 
+                    %(cooking_time)s, %(preparation)s
                 )
+                returning id
             """
         else:
             sql = """
-                insert into recipes (id, name, description, preparation) values (
-                    %(id)s, %(name)s, %(description)s, %(preparation)s
+                insert into recipes (
+                id, name, description, cooking_time, preparation
+                ) values (
+                    %(id)s, %(name)s, %(description)s, 
+                    %(cooking_time)s, %(preparation)s
                 )
             """
 
         try:
             recipe.update(id=recipe_id)
             self.cursor.execute(sql, recipe)
+            if recipe_id is None:
+                result = self.cursor.fetchall()
+                recipe_id = result[0]["id"]
+            self._update_m2m(recipe_id, recipe)
             self.connection.commit()
         except psycopg2.IntegrityError as error:
             raise RecipeIntegrityError(error)
@@ -174,6 +204,7 @@ class RecipeDB:
                  field in UPDATABLE_FIELDS] +
                 [recipe_id]
             )
+            self._update_m2m(recipe_id, updates)
             self.connection.commit()
         except psycopg2.Error as error:
             raise RecipeDataError(error)
@@ -196,11 +227,105 @@ class RecipeDB:
     def delete_recipe(self, recipe_id: int) -> None:
         sql = """
         delete from recipe_ingredients where recipe_id = %s;
-        delete from moon.public.recipe_tags where recipe_id = %s;
+        delete from recipe_tags where recipe_id = %s;
         delete from recipes where id = %s;
         """
         self.cursor.execute(sql, (recipe_id, recipe_id, recipe_id,))
         self.connection.commit()
 
-    def add_ingredients(self):
-        pass
+    def add_ingredients(
+            self, recipe_id: int, ingredients: List[IngredientType]
+    ):
+        sql = """
+            delete from recipe_ingredients where recipe_id = %s
+        """
+        self.cursor.execute(sql, (recipe_id, ))
+        for ingredient in ingredients:
+            ingredient_id = self.get_or_create_ingredient(ingredient)
+            self.add_ingredient_to_recipe(
+                recipe_id, ingredient_id,
+                ingredient["quantity"], ingredient["unit"]
+            )
+
+    def add_tags(
+            self, recipe_id: int, tags: List[str]
+    ):
+        sql = """
+            delete from recipe_tags where recipe_id = %s
+        """
+        self.cursor.execute(sql, (recipe_id, ))
+        for tag in tags:
+            tag_id = self.get_or_create_tag(tag)
+            self.add_tag_to_recipe(recipe_id, tag_id)
+
+    def get_or_create_ingredient(
+            self,
+            ingredient: IngredientType
+    ) -> int:
+        sql = """
+            select * from ingredients
+            where name = %s
+        """
+        self.cursor.execute(sql, (ingredient["name"], ))
+        result = self.cursor.fetchall()
+        if len(result) == 0:
+            ingredient_id = self.add_ingredient(ingredient)
+        else:
+            ingredient_id = result[0]["id"]
+        return ingredient_id
+
+    def add_ingredient(self, ingredient: Dict[str, str]) -> int:
+        sql = """
+            insert into ingredients (name, description)
+            values (%s, %s)
+            returning id
+        """
+        self.cursor.execute(
+            sql, (ingredient.get("name"), ingredient.get("description", ""))
+        )
+        result = self.cursor.fetchall()
+        return result[0]["id"]
+
+    def add_ingredient_to_recipe(
+            self, recipe_id: int, ingredient_id: int,
+            quantity: int, unit: str
+    ) -> None:
+        sql = """
+            insert into recipe_ingredients values (%s, %s, %s, %s)
+        """
+        self.cursor.execute(
+            sql,
+            (recipe_id, ingredient_id, quantity, unit)
+        )
+
+    def get_or_create_tag(self, tag: str) -> int:
+        sql = """
+            select * from tags
+            where tag = %s
+        """
+        self.cursor.execute(sql, (tag, ))
+        result = self.cursor.fetchall()
+        if len(result) == 0:
+            tag_id = self.add_tag(tag)
+        else:
+            tag_id = result[0]["id"]
+        return tag_id
+
+    def add_tag(self, tag: str) -> int:
+        sql = """
+            insert into tags (tag)
+            values (%s)
+            returning id
+        """
+        self.cursor.execute(sql, (tag, ))
+        result = self.cursor.fetchall()
+        return result[0]["id"]
+
+    def add_tag_to_recipe(self, recipe_id: int, tag_id: int,) -> None:
+        sql = """
+            insert into recipe_tags values (%s, %s)
+        """
+        self.cursor.execute(
+            sql,
+            (recipe_id, tag_id)
+        )

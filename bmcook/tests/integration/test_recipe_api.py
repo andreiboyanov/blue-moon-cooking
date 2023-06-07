@@ -116,13 +116,24 @@ def test_update_recipe_non_existing(test_client):
 def test_patch_recipe(test_client):
     result = test_client.patch(
         "http://localhost:8000/recipes/1",
-        json={"id": 99, "description": "Some new recipe description"}
+        json={
+            "id": 99,
+            "description": "Some new recipe description",
+            "ingredients": [
+                {"name": "product patch", "quantity": 777, "unit": "kg"}
+            ]
+        }
     )
     assert result.status_code == 200
     result = test_client.get("http://localhost:8000/recipes/1")
+    recipe = result.json()
     assert result.status_code == 200
-    assert result.json()["description"] == "Some new recipe description"
-    assert result.json()["id"] == 1
+    assert recipe["description"] == "Some new recipe description"
+    assert recipe["id"] == 1
+    assert len(recipe["ingredients"]) == 1
+    assert recipe["ingredients"][0]["name"] == "product patch"
+    assert recipe["ingredients"][0]["quantity"] == 777
+    assert recipe["ingredients"][0]["unit"] == "kg"
 
 
 def test_patch_recipe_non_existent(test_client):
@@ -131,3 +142,41 @@ def test_patch_recipe_non_existent(test_client):
         json={"id": 99, "description": "Some new recipe description"}
     )
     assert result.status_code == 404
+
+
+def test_recipe_with_all_fields(test_client):
+    result = test_client.post(
+        "http://localhost:8000/recipes/",
+        json={
+            "name": "Test recipe",
+            "description": "Test recipe with all fields filled in",
+            "cooking_time": 999,
+            "preparation": "Description of the preparation",
+            "tags": ["tag1", "tag2", "meat"],
+            "ingredients": [
+                {"name": "meat", "quantity": 500, "unit": "g"},
+                {"name": "onion", "quantity": 1, "unit": "pcs"},
+                {"name": "product 1", "quantity": 999, "unit": "pcs"},
+                {"name": "product 2", "quantity": None, "unit": None},
+            ]
+        }
+    )
+    assert result.status_code == 200
+    result = test_client.get("http://localhost:8000/recipes/")
+    assert result.status_code == 200
+    recipes = result.json()
+    last_recipe = recipes[-1]
+    assert last_recipe["name"] == "Test recipe"
+    assert last_recipe["description"] == "Test recipe with all fields filled in"
+    assert last_recipe["cooking_time"] == 999
+    assert last_recipe["preparation"] == "Description of the preparation"
+    assert len(last_recipe["ingredients"]) == 4
+    product_names = [product["name"] for product in last_recipe["ingredients"]]
+    assert "meat" in product_names
+    assert "onion" in product_names
+    assert "product 1" in product_names
+    assert "product 2" in product_names
+    assert len(last_recipe["tags"]) == 3
+    assert "tag1" in last_recipe["tags"]
+    assert "tag2" in last_recipe["tags"]
+    assert "meat" in last_recipe["tags"]

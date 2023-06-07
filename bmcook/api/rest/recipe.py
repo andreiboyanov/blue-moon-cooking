@@ -9,16 +9,17 @@ router = APIRouter()
 
 
 class Ingredient(BaseModel):
-    id: int
-    name: int
-    quantity: str | None = None
+    id: int | None = None
+    name: str
+    quantity: int | None = None
     unit: str | None = None
 
 
 class Recipe(BaseModel):
-    id: int
+    id: int | None = None
     name: str
     description: str | None = None
+    cooking_time: int | None = None
     preparation: str | None = None
     tags: List[str] = []
     ingredients: List[Ingredient] = []
